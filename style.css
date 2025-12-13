@@ -1,0 +1,236 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: white;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.main-content {
+    display: flex;
+    gap: 80px;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.text-section {
+    flex: 1;
+    color: black;
+    text-align: left;
+}
+
+.image-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.description {
+    font-size: 1.15rem;
+    color: #555;
+    margin-bottom: 50px;
+    line-height: 1.7;
+    font-weight: 400;
+    max-width: 450px;
+}
+
+.newsletter-form {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+}
+
+#email-input {
+    flex: 1;
+    min-width: 240px;
+    padding: 16px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    color: black;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+#email-input::placeholder {
+    color: #bbb;
+}
+
+#email-input:focus {
+    outline: none;
+    border-color: #000;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.btn {
+    padding: 16px 40px;
+    background-color: #000;
+    color: white;
+    border: 2px solid #000;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+    font-family: inherit;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+    background-color: white;
+    color: black;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.8;
+    cursor: default;
+}
+
+.duck-image {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+    transition: transform 0.3s ease;
+}
+
+.duck-image:hover {
+    transform: scale(1.02);
+}
+
+footer {
+    font-size: 0.9rem;
+    color: #888;
+    margin-top: 50px;
+}
+
+footer a {
+    color: black;
+    text-decoration: none;
+    border-bottom: 2px solid #000;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+footer a:hover {
+    color: #555;
+    border-bottom-color: #555;
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        flex-direction: column;
+        gap: 50px;
+    }
+
+    .text-section {
+        text-align: center;
+    }
+
+    .description {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .newsletter-form {
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .image-section {
+        min-height: 350px;
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    #email-input {
+        min-width: unset;
+    }
+
+    .duck-image {
+        max-width: 320px;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-content {
+        gap: 30px;
+        padding: 0;
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .description {
+        font-size: 1rem;
+        margin-bottom: 35px;
+    }
+
+    .newsletter-form {
+        gap: 10px;
+        margin-bottom: 40px;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #email-input {
+        padding: 14px 16px;
+        font-size: 16px;
+    }
+
+    .btn {
+        padding: 14px 30px;
+        font-size: 0.95rem;
+    }
+
+    .image-section {
+        min-height: 280px;
+    }
+
+    .duck-image {
+        max-width: 280px;
+        border-radius: 16px;
+    }
+
+    footer {
+        margin-top: 40px;
+        text-align: center;
+    }
+}

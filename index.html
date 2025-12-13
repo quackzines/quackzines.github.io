@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Coming Soon | Quackzines</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-content">
+        <div class="text-section">
+            <h1 id="title">QuackZines</h1>
+            <p id="description" class="description">Fanzines independentes sobre tecnologia.</p>
+            
+            <form class="newsletter-form" id="newsletterForm">
+                <input 
+                    type="email" 
+                    id="email-input"
+                        name="email"
+                    placeholder="Seu melhor email"
+                    required
+                    aria-label="Email para notificações"
+                >
+                <button type="submit" class="btn" id="notify-btn">Notifique-me</button>
+            </form>
+            
+            <footer id="footer">Made by <a href="https://zunalita.github.io" target="_blank">Zunalita</a></footer>
+        </div>
+        
+        <div class="image-section">
+            <img 
+                src="./img/wave.png" 
+                alt="Duck mascot" 
+                class="duck-image"
+                id="duck-image"
+            >
+        </div>
+    </div>
+
+    <!-- Obfuscated JavaScript for language detection and content update -->
+    <script>const _0x13351f=_0x1d27;(function(_0x4f6ed6,_0x157231){const _0x4b5cb6=_0x1d27,_0x41c274=_0x4f6ed6();while(!![]){try{const _0x3a7ed5=-parseInt(_0x4b5cb6(0xe4))/0x1+-parseInt(_0x4b5cb6(0xe1))/0x2+-parseInt(_0x4b5cb6(0xf5))/0x3+-parseInt(_0x4b5cb6(0xf4))/0x4*(-parseInt(_0x4b5cb6(0xe9))/0x5)+-parseInt(_0x4b5cb6(0xe7))/0x6*(parseInt(_0x4b5cb6(0xeb))/0x7)+-parseInt(_0x4b5cb6(0xf2))/0x8*(-parseInt(_0x4b5cb6(0xe2))/0x9)+-parseInt(_0x4b5cb6(0xe8))/0xa*(-parseInt(_0x4b5cb6(0xed))/0xb);if(_0x3a7ed5===_0x157231)break;else _0x41c274['push'](_0x41c274['shift']());}catch(_0xb30cf){_0x41c274['push'](_0x41c274['shift']());}}}(_0x1598,0x86d3a));function detectLanguage(){const _0x7ef6f0=_0x1d27,_0x463080=navigator[_0x7ef6f0(0xf0)]||navigator[_0x7ef6f0(0xdf)];return _0x463080[_0x7ef6f0(0xef)]('pt')?_0x7ef6f0(0xe3):'en';}function _0x1d27(_0xe9d6c6,_0x53964e){_0xe9d6c6=_0xe9d6c6-0xdf;const _0x159866=_0x1598();let _0x1d2765=_0x159866[_0xe9d6c6];return _0x1d2765;}const content={'pt-br':{'title':_0x13351f(0xec),'pageTitle':'Em\x20breve\x20|\x20Quackzines'},'en':{'title':_0x13351f(0xe5),'pageTitle':_0x13351f(0xe0)}};window[_0x13351f(0xf1)](_0x13351f(0xe6),()=>{const _0x4edc90=_0x13351f,_0x1e8957=detectLanguage(),_0x3d1773=content[_0x1e8957];document['documentElement'][_0x4edc90(0xf6)]=_0x1e8957,document[_0x4edc90(0xf3)]('page-title')['textContent']=_0x3d1773['pageTitle'],document[_0x4edc90(0xf3)](_0x4edc90(0xee))[_0x4edc90(0xea)]=_0x3d1773[_0x4edc90(0xee)];});function _0x1598(){const _0x5e0696=['DOMContentLoaded','30WuVmqL','11628020jHitDC','595GBCcEx','textContent','1541701qtmhQP','QuackZines','22qaJmRd','title','startsWith','language','addEventListener','243576pwLCSE','getElementById','22764BHNBnS','567015ATrLrt','lang','userLanguage','Coming\x20Soon\x20|\x20Quackzines','507578Hpuvni','45LhdkwB','pt-br','1058809zkFhQa','Coming\x20Soon'];_0x1598=function(){return _0x5e0696;};return _0x1598();}</script>
+
+    <script>
+        const contentData = {
+            'pt-br': {
+                placeholder: 'Seu melhor email',
+                btnText: 'Notifique-me',
+                btnSuccess: '✓ Inscrição realizada!'
+            },
+            'en': {
+                placeholder: 'Your best email',
+                btnText: 'Notify Me',
+                btnSuccess: '✓ Subscribed!'
+            }
+        };
+
+        function updateLanguageContent() {
+            const lang = document.documentElement.lang;
+            const data = contentData[lang];
+            
+            if (document.getElementById('email-input')) {
+                document.getElementById('email-input').placeholder = data.placeholder;
+            }
+            if (document.getElementById('notify-btn')) {
+                document.getElementById('notify-btn').textContent = data.btnText;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', updateLanguageContent);
+    </script>
+
+    <script src="./js/w_loop.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="./js/form.js"></script>
+
+    <script data-goatcounter="https://quack-sutain-dissect.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
