@@ -17,6 +17,19 @@ const HONEYPOT_KEY = 'newsletter_honeypot_tripped';
 // ====== espelho em memória ======
 let memoryEmails = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 
+// ===== anti masking (gmail) =====
+function normalizeEmail(email) {
+    email = email.toLowerCase().trim();
+    const [user, domain] = email.split('@');
+    if (!user || !domain) return email;
+
+    if (domain === 'gmail.com' || domain === 'googlemail.com') {
+        const cleanUser = user.split('+')[0].replace(/\./g, '');
+        return `${cleanUser}@gmail.com`;
+    }
+    return email;
+}
+
 function isValidEmail(email) {
     return /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(email);
 }
@@ -68,16 +81,14 @@ function showUntrustedMessage(lang) {
 }
 
 if (form) {
-    // ===== honeypot único (base64) =====
+    // ===== honeypot único (base64 false) =====
     const honeypot = document.createElement('input');
     honeypot.type = 'text';
     honeypot.name = 'company';
     honeypot.tabIndex = -1;
     honeypot.autocomplete = 'off';
     honeypot.style.display = 'none';
-
-    // base64("false")
-    honeypot.value = btoa('false');
+    honeypot.value = btoa('false'); // base64("false")
     form.appendChild(honeypot);
 
     // ===== restaura localStorage se apagarem =====
@@ -111,7 +122,7 @@ if (form) {
             return;
         }
 
-        // valida honeypot atual
+        // valida honeypot
         try {
             const decoded = atob(honeypot.value || '');
             if (decoded !== 'false') {
@@ -125,14 +136,15 @@ if (form) {
             return;
         }
 
-        const email = String(emailInput?.value || '').trim().toLowerCase();
-
-        if (!isValidEmail(email)) {
+        const rawEmail = String(emailInput?.value || '');
+        if (!isValidEmail(rawEmail)) {
             alert(lang === 'pt-br'
                 ? 'Por favor, insira um e-mail válido.'
                 : 'Please enter a valid email.');
             return;
         }
+
+        const email = normalizeEmail(rawEmail);
 
         if (alreadySubscribed(email)) {
             alert(lang === 'pt-br'
@@ -164,12 +176,9 @@ if (form) {
             setBtn(lang === 'pt-br' ? '✓ Enviado!' : '✓ Sent!', true);
         } catch (err) {
             console.error(err);
-            setBtn(
-                lang === 'pt-br'
-                    ? 'Erro — tente novamente'
-                    : 'Error — try again',
-                false
-            );
+            setBtn(lang === 'pt-br'
+                ? 'Erro — tente novamente'
+                : 'Error — try again', false);
             return;
         }
 
