@@ -9,6 +9,10 @@ const btn = document.getElementById('notify-btn');
 const STORAGE_KEY = 'newsletter_emails';
 const RATE_KEY = 'newsletter_last_submit';
 const RATE_LIMIT_MS = 60_000; // 1 minuto
+const MAX_EMAILS_PER_DEVICE = 5;
+
+// honeypot
+const HONEYPOT_KEY = 'newsletter_honeypot_tripped';
 
 // ====== espelho em memória ======
 let memoryEmails = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -27,6 +31,10 @@ function alreadySubscribed(email) {
     return memoryEmails.includes(email);
 }
 
+function reachedDeviceLimit() {
+    return memoryEmails.length >= MAX_EMAILS_PER_DEVICE;
+}
+
 function saveEmail(email) {
     if (!memoryEmails.includes(email)) {
         memoryEmails.push(email);
@@ -42,14 +50,26 @@ function canSubmit() {
     return true;
 }
 
+// ===== honeypot helpers =====
+function honeypotTripped() {
+    return localStorage.getItem(HONEYPOT_KEY) === 'true';
+}
+
+function markHoneypotTripped() {
+    localStorage.setItem(HONEYPOT_KEY, 'true');
+}
+
 if (form) {
-    // ===== honeypot =====
+    // ===== honeypot único (base64) =====
     const honeypot = document.createElement('input');
     honeypot.type = 'text';
     honeypot.name = 'company';
     honeypot.tabIndex = -1;
     honeypot.autocomplete = 'off';
     honeypot.style.display = 'none';
+
+    // base64("false")
+    honeypot.value = btoa('false');
     form.appendChild(honeypot);
 
     // ===== restaura localStorage se apagarem =====
@@ -75,8 +95,20 @@ if (form) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // bot detectado
-        if (honeypot.value) return;
+        // honeypot já marcado → bloqueio permanente
+        if (honeypotTripped()) return;
+
+        // valida honeypot atual
+        try {
+            const decoded = atob(honeypot.value || '');
+            if (decoded !== 'false') {
+                markHoneypotTripped();
+                return;
+            }
+        } catch {
+            markHoneypotTripped();
+            return;
+        }
 
         const email = String(emailInput?.value || '').trim().toLowerCase();
         const lang = navigator.language?.startsWith('pt') ? 'pt-br' : 'en-us';
@@ -95,6 +127,13 @@ if (form) {
             return;
         }
 
+        if (reachedDeviceLimit()) {
+            alert(lang === 'pt-br'
+                ? 'Limite de 5 cadastros atingido neste dispositivo.'
+                : 'Device signup limit reached (5 emails).');
+            return;
+        }
+
         if (!canSubmit()) {
             alert(lang === 'pt-br'
                 ? 'Aguarde um pouco antes de tentar novamente.'
@@ -103,34 +142,6 @@ if (form) {
         }
 
         setBtn(lang === 'pt-br' ? 'Enviando...' : 'Sending...', true);
-
-        // IP (best-effort)
-        try {
-            const r = await fetch('https://api.ipify.org?format=json');
-            if (r.ok) {
-                const { ip } = await r.json();
-                let ipInput = form.querySelector('input[name="ip"]');
-                if (!ipInput) {
-                    ipInput = document.createElement('input');
-                    ipInput.type = 'hidden';
-                    ipInput.name = 'ip';
-                    form.appendChild(ipInput);
-                }
-                ipInput.value = ip || '';
-            }
-        } catch {}
-
-        // user_agent + lang
-        ['user_agent', 'lang'].forEach((name) => {
-            let i = form.querySelector(`input[name="${name}"]`);
-            if (!i) {
-                i = document.createElement('input');
-                i.type = 'hidden';
-                i.name = name;
-                form.appendChild(i);
-            }
-            i.value = name === 'lang' ? lang : navigator.userAgent || '';
-        });
 
         try {
             if (!window.emailjs) throw new Error('EmailJS not loaded');
