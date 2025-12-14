@@ -59,6 +59,14 @@ function markHoneypotTripped() {
     localStorage.setItem(HONEYPOT_KEY, 'true');
 }
 
+function showUntrustedMessage(lang) {
+    alert(
+        lang === 'pt-br'
+            ? 'Este navegador foi marcado como não confiável. Tente novamente em outro dispositivo.'
+            : 'This browser was marked as untrusted. Please try again on another device.'
+    );
+}
+
 if (form) {
     // ===== honeypot único (base64) =====
     const honeypot = document.createElement('input');
@@ -95,23 +103,29 @@ if (form) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // honeypot já marcado → bloqueio permanente
-        if (honeypotTripped()) return;
+        const lang = navigator.language?.startsWith('pt') ? 'pt-br' : 'en-us';
+
+        // honeypot já tripped → bloqueio permanente
+        if (honeypotTripped()) {
+            showUntrustedMessage(lang);
+            return;
+        }
 
         // valida honeypot atual
         try {
             const decoded = atob(honeypot.value || '');
             if (decoded !== 'false') {
                 markHoneypotTripped();
+                showUntrustedMessage(lang);
                 return;
             }
         } catch {
             markHoneypotTripped();
+            showUntrustedMessage(lang);
             return;
         }
 
         const email = String(emailInput?.value || '').trim().toLowerCase();
-        const lang = navigator.language?.startsWith('pt') ? 'pt-br' : 'en-us';
 
         if (!isValidEmail(email)) {
             alert(lang === 'pt-br'
@@ -150,9 +164,12 @@ if (form) {
             setBtn(lang === 'pt-br' ? '✓ Enviado!' : '✓ Sent!', true);
         } catch (err) {
             console.error(err);
-            setBtn(lang === 'pt-br'
-                ? 'Erro — tente novamente'
-                : 'Error — try again', false);
+            setBtn(
+                lang === 'pt-br'
+                    ? 'Erro — tente novamente'
+                    : 'Error — try again',
+                false
+            );
             return;
         }
 
