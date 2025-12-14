@@ -14,8 +14,9 @@ const MAX_EMAILS_PER_DEVICE = 5;
 // honeypot
 const HONEYPOT_KEY = 'newsletter_honeypot_tripped';
 
-// ====== espelho em memória ======
+// ===== espelhos em memória =====
 let memoryEmails = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let honeypotMemory = localStorage.getItem(HONEYPOT_KEY) === 'true';
 
 // ===== anti masking (gmail) =====
 function normalizeEmail(email) {
@@ -65,10 +66,11 @@ function canSubmit() {
 
 // ===== honeypot helpers =====
 function honeypotTripped() {
-    return localStorage.getItem(HONEYPOT_KEY) === 'true';
+    return honeypotMemory === true;
 }
 
 function markHoneypotTripped() {
+    honeypotMemory = true;
     localStorage.setItem(HONEYPOT_KEY, 'true');
 }
 
@@ -81,7 +83,7 @@ function showUntrustedMessage(lang) {
 }
 
 if (form) {
-    // ===== honeypot único (base64 false) =====
+    // ===== honeypot invisível =====
     const honeypot = document.createElement('input');
     honeypot.type = 'text';
     honeypot.name = 'company';
@@ -91,17 +93,24 @@ if (form) {
     honeypot.value = btoa('false'); // base64("false")
     form.appendChild(honeypot);
 
-    // ===== restaura localStorage se apagarem =====
+    // ===== persistência defensiva =====
     setInterval(() => {
-        const ls = localStorage.getItem(STORAGE_KEY);
-        if (!ls && memoryEmails.length) {
+        if (!localStorage.getItem(STORAGE_KEY) && memoryEmails.length) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryEmails));
+        }
+
+        if (!localStorage.getItem(HONEYPOT_KEY) && honeypotMemory === true) {
+            localStorage.setItem(HONEYPOT_KEY, 'true');
         }
     }, 1000);
 
     window.addEventListener('storage', (e) => {
         if (e.key === STORAGE_KEY && !e.newValue && memoryEmails.length) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryEmails));
+        }
+
+        if (e.key === HONEYPOT_KEY && !e.newValue && honeypotMemory === true) {
+            localStorage.setItem(HONEYPOT_KEY, 'true');
         }
     });
 
@@ -116,7 +125,7 @@ if (form) {
 
         const lang = navigator.language?.startsWith('pt') ? 'pt-br' : 'en-us';
 
-        // honeypot já tripped → bloqueio permanente
+        // honeypot já tripped
         if (honeypotTripped()) {
             showUntrustedMessage(lang);
             return;
