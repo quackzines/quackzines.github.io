@@ -10,6 +10,9 @@ const STORAGE_KEY = 'newsletter_emails';
 const RATE_KEY = 'newsletter_last_submit';
 const RATE_LIMIT_MS = 60_000; // 1 minuto
 
+// ====== espelho em memória ======
+let memoryEmails = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
 function isValidEmail(email) {
     return /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(email);
 }
@@ -21,15 +24,13 @@ function setBtn(text, disabled = false) {
 }
 
 function alreadySubscribed(email) {
-    const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    return list.includes(email);
+    return memoryEmails.includes(email);
 }
 
 function saveEmail(email) {
-    const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    if (!list.includes(email)) {
-        list.push(email);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    if (!memoryEmails.includes(email)) {
+        memoryEmails.push(email);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryEmails));
     }
 }
 
@@ -42,7 +43,7 @@ function canSubmit() {
 }
 
 if (form) {
-    // Honeypot (campo invisível)
+    // ===== honeypot =====
     const honeypot = document.createElement('input');
     honeypot.type = 'text';
     honeypot.name = 'company';
@@ -50,6 +51,20 @@ if (form) {
     honeypot.autocomplete = 'off';
     honeypot.style.display = 'none';
     form.appendChild(honeypot);
+
+    // ===== restaura localStorage se apagarem =====
+    setInterval(() => {
+        const ls = localStorage.getItem(STORAGE_KEY);
+        if (!ls && memoryEmails.length) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryEmails));
+        }
+    }, 1000);
+
+    window.addEventListener('storage', (e) => {
+        if (e.key === STORAGE_KEY && !e.newValue && memoryEmails.length) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryEmails));
+        }
+    });
 
     try {
         if (EMAILJS_PUBLIC_KEY && window.emailjs?.init) {
@@ -60,7 +75,7 @@ if (form) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Bot detectado
+        // bot detectado
         if (honeypot.value) return;
 
         const email = String(emailInput?.value || '').trim().toLowerCase();
