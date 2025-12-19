@@ -38,14 +38,12 @@ jobs:
           source: ./
           destination: ./_site
 
-      - name: Obfuscate JS files in _site
-        run: |
-          chmod -R +w _site/js/
-          for file in _site/js/*.js; do
-            if [ -f "$file" ]; then
-              terser "$file" -o "$file" --compress --mangle
-            fi
-          done
+      - name: Minify JS files
+        uses: pascalgn/minify-js-action@v0.1.0
+        with:
+          directory: _site/js/
+          filePattern: "*.js"
+          minifiedFileSuffix: ""
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
