@@ -29,6 +29,14 @@ jobs:
       - name: Install Terser
         run: npm install -g terser
 
+      - name: Obfuscate JS files
+        run: |
+          for file in js/*.js; do
+            if [ -f "$file" ]; then
+              terser "$file" -o "$file" --compress --mangle
+            fi
+          done
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
@@ -37,15 +45,6 @@ jobs:
         with:
           source: ./
           destination: ./_site
-
-      - name: Obfuscate JS files in _site
-        run: |
-          for file in _site/js/*.js; do
-            if [ -f "$file" ]; then
-              terser "$file" -o "$file.tmp" --compress --mangle
-              mv "$file.tmp" "$file"
-            fi
-          done
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
